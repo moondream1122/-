@@ -1,0 +1,77 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://enemy_tank.gd" id="1_tank"]
+[ext_resource type="AudioStream" path="res://bounce.wav" id="2_bounce"]
+[ext_resource type="AudioStream" path="res://explosion.wav" id="3_explosion"]
+[ext_resource type="AudioStream" path="res://Parry.wav" id="4_parry"]
+[ext_resource type="Script" path="res://trail.gd" id="5_trail"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tank"]
+radius = 40.0
+
+[sub_resource type="Gradient" id="Gradient_tank_trail"]
+offsets = PackedFloat32Array(0, 0.4, 1)
+colors = PackedColorArray(0.2, 0.8, 1, 0, 0.2, 0.8, 1, 0.5, 0.2, 0.8, 1, 1)
+
+[sub_resource type="Curve" id="Curve_tank_trail_width"]
+_data = [Vector2(0, 0), 0.0, 2.0, 0, 0, Vector2(0.3, 0.5), 1.5, 1.5, 0, 0, Vector2(1, 1), 0.5, 0.0, 0, 0]
+point_count = 3
+
+[node name="EnemyTank" type="CharacterBody2D"]
+modulate = Color(2, 2, 2, 1)
+scale = Vector2(2, 2)
+script = ExtResource("1_tank")
+
+[node name="Hexagon" type="Polygon2D" parent="."]
+color = Color(0.2, 0.8, 1, 1)
+polygon = PackedVector2Array(20, 0, 10, 17.32, -10, 17.32, -20, 0, -10, -17.32, 10, -17.32)
+
+[node name="HexagonOutline" type="Line2D" parent="."]
+points = PackedVector2Array(20, 0, 10, 17.32, -10, 17.32, -20, 0, -10, -17.32, 10, -17.32, 20, 0)
+width = 3.0
+default_color = Color(0.4, 0.9, 1, 1)
+joint_mode = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_tank")
+
+[node name="ShieldParticles" type="CPUParticles2D" parent="."]
+amount = 20
+lifetime = 1.5
+speed_scale = 0.5
+emission_shape = 1
+emission_sphere_radius = 35.0
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 15.0
+scale_amount_min = 1.0
+scale_amount_max = 3.0
+color = Color(0.2, 0.8, 1, 0.5)
+
+[node name="BounceSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_bounce")
+
+[node name="ExplosionSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_explosion")
+
+[node name="ParrySound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_parry")
+volume_db = 3.0
+
+[node name="MetalSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("2_bounce")
+volume_db = 5.0
+
+[node name="Trail" type="Line2D" parent="."]
+top_level = true
+width = 24.0
+width_curve = SubResource("Curve_tank_trail_width")
+default_color = Color(0.2, 0.8, 1, 1)
+gradient = SubResource("Gradient_tank_trail")
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 1
+script = ExtResource("5_trail")
+max_points = 20

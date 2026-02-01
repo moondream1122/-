@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://cspnx5wuc32aw"]
+
+[ext_resource type="Script" path="res://title_screen.gd" id="1_title"]
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_title")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.1, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+custom_constants/separation = 50
+
+[node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0.8, 1)
+theme_override_font_sizes/font_size = 96
+text = "NEON PULSE"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.2, 1)
+theme_override_font_sizes/font_size = 24
+text = "極光連線"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(200, 60)
+theme_override_font_sizes/font_size = 32
+text = "START GAME"
+
+[node name="DifficultyContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="LeftButton" type="Button" parent="CenterContainer/VBoxContainer/DifficultyContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 40)
+theme_override_font_sizes/font_size = 24
+text = "<"
+
+[node name="DifficultyLabel" type="Label" parent="CenterContainer/VBoxContainer/DifficultyContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+theme_override_colors/font_color = Color(1, 1, 0.2, 1)
+theme_override_font_sizes/font_size = 28
+text = "普通"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightButton" type="Button" parent="CenterContainer/VBoxContainer/DifficultyContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 40)
+theme_override_font_sizes/font_size = 24
+text = ">"
+
+[node name="ModeContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ModeLeftButton" type="Button" parent="CenterContainer/VBoxContainer/ModeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 40)
+theme_override_font_sizes/font_size = 24
+text = "<"
+
+[node name="ModeLabel" type="Label" parent="CenterContainer/VBoxContainer/ModeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+theme_override_colors/font_color = Color(0.2, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 28
+text = "故事模式"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ModeRightButton" type="Button" parent="CenterContainer/VBoxContainer/ModeContainer"]
+layout_mode = 2
+custom_minimum_size = Vector2(50, 40)
+theme_override_font_sizes/font_size = 24
+text = ">"

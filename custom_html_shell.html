@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>極光連線</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        #game-container {
+            position: relative;
+            border: 2px solid #444;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 128, 255, 0.3);
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #status {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #loading {
+            display: none;
+            color: #0f0;
+        }
+
+        #error {
+            display: none;
+            color: #f00;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .instructions h3 {
+            color: #0ff;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .control-item {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>極光連線</h1>
+
+    <div id="game-container">
+        <canvas id="canvas">
+            HTML5 canvas appears to be unsupported in the current browser.<br>
+            Please try updating your browser to a recent version with HTML5 support.
+        </canvas>
+    </div>
+
+    <div id="status">
+        <div id="loading">載入中...</div>
+        <div id="error">載入失敗，請檢查網路連接並重試。</div>
+    </div>
+
+    <div class="instructions">
+        <h3>遊戲說明</h3>
+        <div class="controls" id="desktop-controls">
+            <div class="control-item"><strong>移動：</strong>滑鼠移動控制擋板方向</div>
+            <div class="control-item"><strong>精準格擋：</strong>快速旋轉滑鼠可觸發精準格擋</div>
+        </div>
+        <div class="controls" id="mobile-controls" style="display: none;">
+            <div class="control-item"><strong>移動：</strong>觸摸螢幕控制擋板方向</div>
+            <div class="control-item"><strong>精準格擋：</strong>快速滑動觸摸點觸發精準格擋</div>
+        </div>
+        <div class="control-item"><strong>目標：</strong>防禦敵人到達中心，收集經驗值升級</div>
+        <p>在網頁上玩遊戲時，首次點擊螢幕可能需要允許音頻播放。</p>
+    </div>
+
+    <script src="$GODOT_URL.js"></script>
+    <script>
+        const GODOT_CONFIG = {
+            "args": [],
+            "canvas": document.getElementById("canvas"),
+            "canvasResizePolicy": 2,
+            "experimentalVK": false,
+            "fileSizes": $GODOT_SIZE,
+            "focusCanvas": true,
+            "gdextensionLibs": []
+        };
+
+        const GODOT_LOADING = document.getElementById("loading");
+        const GODOT_ERROR = document.getElementById("error");
+
+        // 檢測設備類型並顯示相應控制說明
+        function detectDeviceType() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                           ('ontouchstart' in window) ||
+                           (window.innerWidth <= 768 && window.innerHeight <= 1024);
+            
+            const desktopControls = document.getElementById('desktop-controls');
+            const mobileControls = document.getElementById('mobile-controls');
+            
+            if (isMobile) {
+                desktopControls.style.display = 'none';
+                mobileControls.style.display = 'block';
+                console.log('檢測到移動設備，顯示觸摸控制說明');
+            } else {
+                desktopControls.style.display = 'block';
+                mobileControls.style.display = 'none';
+                console.log('檢測到桌面設備，顯示滑鼠控制說明');
+            }
+        }
+
+        function onGodotLoading() {
+            GODOT_LOADING.style.display = "block";
+        }
+
+        function onGodotLoaded() {
+            GODOT_LOADING.style.display = "none";
+        }
+
+        function onGodotError() {
+            GODOT_ERROR.style.display = "block";
+        }
+
+        window.addEventListener("load", function() {
+            detectDeviceType();
+            Godot(GODOT_CONFIG, {
+                onLoading: onGodotLoading,
+                onLoaded: onGodotLoaded,
+                onError: onGodotError
+            });
+        });
+    </script>
+</body>
+</html>

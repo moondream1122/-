@@ -1,0 +1,94 @@
+[gd_scene load_steps=6 format=3 uid="uid://dx6pwtp4bdui4"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_abcde"]
+[ext_resource type="Texture2D" uid="uid://e3rilmhwqhbk" path="res://icon.svg" id="2_onrkg"]
+[ext_resource type="Script" path="res://trail.gd" id="3_trail"]
+
+[sub_resource type="Shader" id="Shader_neon_player"]
+code = "shader_type canvas_item;
+uniform vec4 glow_color : source_color = vec4(0.2, 1.0, 0.4, 1.0);
+uniform float glow_intensity : hint_range(0.0, 5.0) = 2.5;
+uniform float pulse_speed : hint_range(0.0, 10.0) = 3.0;
+
+void fragment() {
+    vec4 tex = texture(TEXTURE, UV);
+    float pulse = 0.8 + 0.2 * sin(TIME * pulse_speed);
+    
+    vec4 final_color = tex;
+    final_color.rgb = glow_color.rgb * glow_intensity * pulse;
+    final_color.a = tex.a;
+    
+    COLOR = final_color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_neon_player"]
+shader = SubResource("Shader_neon_player")
+shader_parameter/glow_color = Color(0.2, 1.0, 0.4, 1.0)
+shader_parameter/glow_intensity = 2.5
+shader_parameter/pulse_speed = 3.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_paddle"]
+size = Vector2(10, 90)
+
+[sub_resource type="ConvexPolygonShape2D" id="ConvexPolygonShape2D_shield"]
+points = PackedVector2Array(-35, -22.5, 35, -22.5, 30, 22.5, -30, 22.5)
+
+[sub_resource type="Shader" id="Shader_paddle_glow"]
+code = "shader_type canvas_item;
+uniform vec4 glow_color : source_color = vec4(0.2, 1.0, 0.4, 1.0);
+uniform float glow_intensity : hint_range(0.0, 5.0) = 3.0;
+uniform float pulse_speed : hint_range(0.0, 10.0) = 2.0;
+uniform float edge_glow : hint_range(0.0, 1.0) = 0.3;
+
+void fragment() {
+    vec4 tex = texture(TEXTURE, UV);
+    
+    // 創建邊緣發光效果
+    float edge = 1.0 - smoothstep(0.0, edge_glow, min(UV.x, min(UV.y, min(1.0-UV.x, 1.0-UV.y))));
+    
+    // 脈動效果
+    float pulse = 0.7 + 0.3 * sin(TIME * pulse_speed);
+    
+    vec4 final_color = tex;
+    final_color.rgb = mix(final_color.rgb, glow_color.rgb * glow_intensity, edge * pulse);
+    final_color.a = tex.a;
+    
+    COLOR = final_color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_paddle_glow"]
+shader = SubResource("Shader_paddle_glow")
+shader_parameter/glow_color = Color(0.2, 1.0, 0.4, 1.0)
+shader_parameter/glow_intensity = 3.0
+shader_parameter/pulse_speed = 2.0
+shader_parameter/edge_glow = 0.3
+
+[node name="Player" type="Node2D"]
+script = ExtResource("1_abcde")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_neon_player")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_onrkg")
+
+[node name="Paddle" type="StaticBody2D" parent="."]
+position = Vector2(75, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Paddle"]
+position = Vector2(0, 0)
+shape = SubResource("RectangleShape2D_paddle")
+
+[node name="PaddleSprite" type="ColorRect" parent="Paddle"]
+material = SubResource("ShaderMaterial_paddle_glow")
+offset_left = -5.0
+offset_top = -45.0
+offset_right = 5.0
+offset_bottom = 45.0
+color = Color(0.1, 0.8, 0.3, 0.9)
+
+[node name="Trail" type="Line2D" parent="Paddle"]
+script = ExtResource("3_trail")
+max_points = 12
+trail_width = 4.0
+default_color = Color(0.2, 1.0, 0.4, 0.8)
+

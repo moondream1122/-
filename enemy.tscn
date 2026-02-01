@@ -1,0 +1,84 @@
+[gd_scene format=3 uid="uid://7qrpjs54b8w2"]
+
+[ext_resource type="Script" uid="uid://c4ikfsk2qsfck" path="res://enemy.gd" id="1_enemy"]
+[ext_resource type="Texture2D" uid="uid://e3rilmhwqhbk" path="res://icon.svg" id="2_4gyqm"]
+[ext_resource type="AudioStream" uid="uid://obxu4ujxlnye" path="res://bounce.wav" id="3_bounce"]
+[ext_resource type="AudioStream" uid="uid://dqifmqre5me5p" path="res://explosion.wav" id="4_explosion"]
+[ext_resource type="Script" uid="uid://brgto1aavp3gr" path="res://trail.gd" id="5_trail"]
+[ext_resource type="AudioStream" uid="uid://mjqojix2s7gx" path="res://Parry.wav" id="6_parry"]
+
+[sub_resource type="Shader" id="Shader_neon"]
+code = "shader_type canvas_item;
+uniform vec4 glow_color : source_color = vec4(1.0, 0.8, 0.2, 1.0);
+uniform float glow_intensity : hint_range(0.0, 5.0) = 2.0;
+uniform float glow_size : hint_range(0.0, 0.1) = 0.03;
+
+void fragment() {
+    vec4 tex = texture(TEXTURE, UV);
+    float alpha = tex.a;
+    
+    // Sample edges for glow
+    float glow = 0.0;
+    for (float i = 0.0; i < 6.28; i += 0.785) {
+        vec2 offset = vec2(cos(i), sin(i)) * glow_size;
+        glow += texture(TEXTURE, UV + offset).a;
+    }
+    glow = glow / 8.0;
+    
+    // Combine original with glow
+    vec4 final_color = tex;
+    final_color.rgb = mix(tex.rgb, glow_color.rgb, 0.5) * glow_intensity;
+    final_color.a = max(alpha, glow * 0.5);
+    
+    COLOR = final_color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_neon"]
+shader = SubResource("Shader_neon")
+shader_parameter/glow_color = Color(1, 0.8, 0.2, 1)
+shader_parameter/glow_intensity = 2.0
+shader_parameter/glow_size = 0.03
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qi2p4"]
+radius = 16.0
+
+[sub_resource type="Curve" id="Curve_trail_width"]
+_data = [Vector2(0, 0), 0.0, 2.0, 0, 0, Vector2(0.3, 0.5), 1.5, 1.5, 0, 0, Vector2(1, 1), 0.5, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_trail"]
+offsets = PackedFloat32Array(0, 0.3, 0.7, 1)
+colors = PackedColorArray(1, 0.8, 0.2, 0, 1, 0.85, 0.3, 0.3, 1, 0.9, 0.4, 0.7, 1, 1, 0.5, 1)
+
+[node name="Enemy" type="CharacterBody2D" unique_id=1960464680]
+script = ExtResource("1_enemy")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2147335702]
+material = SubResource("ShaderMaterial_neon")
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("2_4gyqm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1709323030]
+shape = SubResource("CircleShape2D_qi2p4")
+
+[node name="BounceSound" type="AudioStreamPlayer2D" parent="." unique_id=1455841368]
+stream = ExtResource("3_bounce")
+
+[node name="ExplosionSound" type="AudioStreamPlayer2D" parent="." unique_id=355081458]
+stream = ExtResource("4_explosion")
+
+[node name="ParrySound" type="AudioStreamPlayer2D" parent="." unique_id=1175172918]
+stream = ExtResource("6_parry")
+volume_db = 3.0
+
+[node name="Trail" type="Line2D" parent="." unique_id=2096803990]
+top_level = true
+width = 16.0
+width_curve = SubResource("Curve_trail_width")
+default_color = Color(1, 0.8, 0.2, 1)
+gradient = SubResource("Gradient_trail")
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 1
+script = ExtResource("5_trail")
+max_points = 20

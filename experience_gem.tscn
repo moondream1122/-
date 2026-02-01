@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://fm3yw7k5t227"]
+
+[ext_resource type="Script" path="res://experience_gem.gd" id="1_script"]
+
+[node name="ExperienceGem" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-8, 0, 0, -12, 8, 0, 0, 12)
+color = Color(0, 1, 0, 1)
+modulate = Color(2, 2, 2, 1)
