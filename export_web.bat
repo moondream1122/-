@@ -9,7 +9,7 @@ godot --path . --export-release "Web" "..\web_build"
 
 echo.
 echo 導出完成！
-echo 文件已保存到 ..\web_build 目錄
+echo 文件已保存到 d:\web_build 目錄
 echo.
 echo 要測試網頁版本，請在瀏覽器中打開 ..\web_build\index.html
 echo.

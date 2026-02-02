@@ -4,6 +4,7 @@ extends CanvasLayer
 
 # 已選擇的天賦追蹤 (靜態變數，全局保持)
 static var selected_upgrades_history = []
+static var orbital_shield_count = 0  # 衛星盾選擇次數限制
 
 # 升級選項池
 var upgrade_pool = {
@@ -109,15 +110,23 @@ func _get_random_upgrades(current_level: int) -> Array:
 	"""從池中隨機選擇不重複的升級"""
 	var available_upgrades = []
 	
-	# 添加普通升級（排除已經選擇過的，生命恢復、衛星盾和巨人擋板除外）
+	# 添加普通升級（排除已經選擇過的，生命恢復和衛星盾除外）
 	for upgrade_name in upgrade_pool.keys():
-		if not selected_upgrades_history.has(upgrade_name) or upgrade_name in ["生命恢復", "衛星盾", "巨人擋板"]:
+		if upgrade_name == "衛星盾":
+			# 衛星盾最多只能選擇3次
+			if orbital_shield_count < 3:
+				available_upgrades.append(upgrade_name)
+		elif not selected_upgrades_history.has(upgrade_name) or upgrade_name == "生命恢復":
 			available_upgrades.append(upgrade_name)
 	
 	# 添加已解鎖的精英升級（排除已經選擇過的，衛星盾除外）
 	for elite_name in elite_upgrade_pool.keys():
 		var elite_data = elite_upgrade_pool[elite_name]
-		if current_level >= elite_data["unlock_level"] and (not selected_upgrades_history.has(elite_name) or elite_name == "衛星盾"):
+		if elite_name == "衛星盾":
+			# 衛星盾最多只能選擇3次
+			if current_level >= elite_data["unlock_level"] and orbital_shield_count < 3:
+				available_upgrades.append(elite_name)
+		elif current_level >= elite_data["unlock_level"] and not selected_upgrades_history.has(elite_name):
 			available_upgrades.append(elite_name)
 	
 	# 如果沒有足夠的升級，添加一些基本升級作為後備
@@ -155,6 +164,11 @@ func _on_upgrade_selected(button_index: int) -> void:
 	
 	# 應用升級效果
 	_apply_upgrade_effect(effect)
+	
+	# 特殊處理衛星盾計數
+	if upgrade_name == "衛星盾":
+		orbital_shield_count += 1
+		print("[DEBUG] 衛星盾選擇次數: %d/3" % orbital_shield_count)
 	
 	# 添加到已選擇升級歷史記錄（生命恢復和衛星盾除外）
 	if upgrade_name != "生命恢復" and upgrade_name != "衛星盾":
@@ -218,4 +232,5 @@ func _apply_upgrade_effect(effect: String) -> void:
 func reset_upgrade_history() -> void:
 	"""重置升級歷史記錄"""
 	selected_upgrades_history.clear()
-	print("[DEBUG] Upgrade history reset")
+	orbital_shield_count = 0
+	print("[DEBUG] Upgrade history reset, orbital shield count reset to 0")

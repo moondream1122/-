@@ -1,0 +1,6 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://custom_theme"]
+
+[ext_resource type="FontFile" uid="uid://custom_font" path="res://fonts/chinese_font.tres" id="1"]
+
+[resource]
+default_font = ExtResource("1")
