@@ -1,0 +1,7 @@
+[gd_resource type="SystemFont" format=3 uid="uid://system_font"]
+
+[resource]
+font_names = PackedStringArray("Arial", "Helvetica", "Sans-Serif")
+font_italic = false
+font_weight = 400
+allow_system_fallback = true

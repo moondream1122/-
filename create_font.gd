@@ -2,6 +2,10 @@ extends SceneTree
 
 func _init():
     var font = FontFile.new()
-    font.load_dynamic_font("res://fonts/NotoSansCJK-Regular.otf")
-    ResourceSaver.save(font, "res://fonts/chinese_font.tres")
+    font.font_name = "NotoSansCJK"
+    font.data = FileAccess.get_file_as_bytes("res://fonts/NotoSansCJK-Regular.otf")
+    var err = ResourceSaver.save(font, "res://fonts/chinese_font.tres")
+    print("Save error: ", errtoSansCJK-Regular.otf")
+    var err = ResourceSaver.save(font, "res://fonts/chinese_font.tres")
+    print("Save error: ", err)
     quit()
